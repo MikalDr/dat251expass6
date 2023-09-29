@@ -19,24 +19,25 @@ public class TodoController {
   public ArrayList<Todo> getTodos() {
     return todos;
   }
-  @GetMapping("/todos/{ID}")
-  public Todo getTodo(@RequestParam Long id) {
+  @GetMapping("/todos/{id}")
+  public Todo getTodo(@PathVariable Long id) throws Exception {
     for (Todo todo: todos){
         if (Objects.equals(todo.getId(), id)){
             return todo;
         }
     }
-    return null;
+    return errorTodo(id);
   }
-  @PutMapping("/todos")
-  public Todo updateTodo(@RequestBody Todo newTodo){
-    for (Todo todo: todos){
-      if (Objects.equals(todo.getId(), newTodo.getId())){
-          todos.remove(todo);
-          todos.add(newTodo);
-      }
+  @PutMapping("/todos/{id}")
+  public Todo updateTodo(@PathVariable Long id, @RequestBody Todo newTodo){
+      newTodo.setId(id);
+      for (Todo todo: todos){
+          if (Objects.equals(todo.getId(), id)){
+              todos.remove(todo);
+              todos.add(newTodo);
+          }
     }
-      return newTodo;
+      return errorTodo(id);
   }
   @PostMapping("/todos")
   public Todo postTodo(@RequestBody Todo newTodo){
@@ -45,9 +46,21 @@ public class TodoController {
       todos.add(newTodo);
       return newTodo;
   }
-  @DeleteMapping("/todos")
-  public Todo deleteTodo(@RequestBody Todo deleteTodo){
-    todos.remove(deleteTodo);
-    return deleteTodo;
+  @DeleteMapping("/todos/{id}")
+  public Todo deleteTodo(@PathVariable Long id) {
+      for (Todo todo : todos) {
+          if (Objects.equals(todo.getId(), id)) {
+              todos.remove(todo);
+              return todo;
+          }
+      }
+      return errorTodo(id);
+  }
+
+  public Todo errorTodo(Long id){
+      Todo err = new Todo();
+      err.setDescription(String.format(TODO_WITH_THE_ID_X_NOT_FOUND, id));
+
+      return err;
   }
 }

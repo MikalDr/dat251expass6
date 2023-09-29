@@ -83,10 +83,12 @@ class TodoControllerTest {
         // Save one todo.
         final Todo todo = new Todo("summary1", "description1");
         final Todo createdTodo = gson.fromJson(doPostRequest(todo), Todo.class);
+        System.out.println("The id is "+ createdTodo.getId());
         assertNotNull(createdTodo.getId());
 
         // Execute get request
         final String getResult = doGetRequest(createdTodo.getId());
+        System.out.println(getResult);
 
         // Parse returned todo.
         final Todo returnedTodo = gson.fromJson(getResult, Todo.class);
